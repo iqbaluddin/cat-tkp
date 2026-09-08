@@ -76,8 +76,7 @@ const LandingPage = ({ onStartExam }) => {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-                      Tryout{" "}
-                      <span className="text-primary">Sekolah Rakyat</span>
+                      Tryout <span className="text-primary">Free</span>
                     </h2>
 
                     <p className="mt-3 text-sm text-gray-600">
@@ -100,7 +99,7 @@ const LandingPage = ({ onStartExam }) => {
                       Total Soal
                     </span>
                   </div>
-                  <p className="text-2xl font-bold text-gray-800">135</p>
+                  <p className="text-2xl font-bold text-gray-800">10</p>
                   <p className="text-xs text-gray-400">Soal Pilihan Ganda</p>
                 </div>
 
@@ -113,7 +112,7 @@ const LandingPage = ({ onStartExam }) => {
                       Durasi
                     </span>
                   </div>
-                  <p className="text-2xl font-bold text-gray-800">120</p>
+                  <p className="text-2xl font-bold text-gray-800">10</p>
                   <p className="text-xs text-gray-400">Menit</p>
                 </div>
 
@@ -126,7 +125,7 @@ const LandingPage = ({ onStartExam }) => {
                       Kelulusan
                     </span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">70%</p>
+                  <p className="text-2xl font-bold text-green-600">90%</p>
                   <p className="text-xs text-gray-400">Nilai Minimum</p>
                 </div>
               </div>

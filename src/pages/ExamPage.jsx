@@ -4,7 +4,8 @@ import Sidebar from "../components/Sidebar";
 import QuestionCard from "../components/QuestionCard";
 import ResultModal from "../components/ResultModal";
 import LandingPage from "./LandingPage";
-import { questions } from "../data/questions";
+import { questions as originalQuestions } from "../data/questions";
+import { shuffleArray } from "../utils/shuffle";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,18 +25,35 @@ const ExamPage = () => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [examResults, setExamResults] = useState(null);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
 
-  // const DURATION = 420; // 2 jam
-  // const DURATION = 1200; // 2 jam
-  const DURATION = 7200; // 2 jam
+  const DURATION = 60; // 2 jam
   const questionsPerPage = 20;
-  const totalPages = Math.ceil(questions.length / questionsPerPage);
-  const totalQuestions = questions.length;
+  const totalQuestions = shuffledQuestions.length;
+  const totalPages = Math.ceil(totalQuestions / questionsPerPage);
 
   const startTimeRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const isExamFinishedRef = useRef(false);
   const answersRef = useRef(answers);
+
+  // Inisialisasi soal acak dan ambil 10 soal saja
+  useEffect(() => {
+    // Acak semua soal
+    const shuffled = shuffleArray(originalQuestions);
+
+    // Ambil hanya 10 soal pertama dari hasil acakan
+    const selectedQuestions = shuffled.slice(0, 10);
+
+    // Beri nomor urut baru pada soal yang sudah dipilih
+    const renumberedQuestions = selectedQuestions.map((q, index) => ({
+      ...q,
+      number: index + 1,
+    }));
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShuffledQuestions(renumberedQuestions);
+  }, []);
 
   useEffect(() => {
     answersRef.current = answers;
@@ -44,7 +62,6 @@ const ExamPage = () => {
   // Timer hanya berjalan jika ujian dimulai dan belum berakhir
   useEffect(() => {
     if (!isExamStarted || isExamEnded) {
-      // Jika ujian sudah berakhir, hentikan timer
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
@@ -121,7 +138,7 @@ const ExamPage = () => {
 
   const handleNext = () => {
     if (isExamEnded || !isExamStarted) return;
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion((prev) => prev + 1);
     }
   };
@@ -134,7 +151,7 @@ const ExamPage = () => {
     let unanswered = 0;
     const details = [];
 
-    questions.forEach((q, index) => {
+    shuffledQuestions.forEach((q, index) => {
       const userAnswer = answersToUse[index];
       const isAnswered = userAnswer !== undefined && userAnswer !== null;
       const isCorrect = isAnswered && userAnswer === q.correctAnswer;
@@ -172,7 +189,6 @@ const ExamPage = () => {
     if (isExamFinishedRef.current) return;
     isExamFinishedRef.current = true;
 
-    // **HENTIKAN TIMER SECARA PASTI**
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
@@ -257,7 +273,19 @@ const ExamPage = () => {
     }
   };
 
-  const currentQuestionData = questions[currentQuestion];
+  // Jika soal belum diacak, tampilkan loading
+  if (shuffledQuestions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Memuat soal...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestionData = shuffledQuestions[currentQuestion];
   const isFlagged = flaggedQuestions.includes(currentQuestion);
 
   if (!isExamStarted) {
@@ -271,14 +299,14 @@ const ExamPage = () => {
         onEndExam={handleEndExam}
         onTimeEnd={handleTimeEnd}
         isExamStarted={isExamStarted}
-        isExamEnded={isExamEnded} // Kirim status ke Header
+        isExamEnded={isExamEnded}
       />
 
       <div className="flex-1 container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-4 xl:col-span-3">
             <Sidebar
-              questions={questions}
+              questions={shuffledQuestions}
               currentQuestion={currentQuestion}
               answers={answers}
               flaggedQuestions={flaggedQuestions}
@@ -333,7 +361,7 @@ const ExamPage = () => {
 
                     <button
                       onClick={handleNext}
-                      disabled={currentQuestion === questions.length - 1}
+                      disabled={currentQuestion === totalQuestions - 1}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-gray-700 font-medium"
                     >
                       Berikutnya
@@ -369,7 +397,7 @@ const ExamPage = () => {
 
                     <div className="bg-white px-4 py-2.5 rounded-xl border border-gray-200">
                       <span className="text-sm font-medium text-gray-700">
-                        {currentQuestion + 1} / {questions.length} Soal
+                        {currentQuestion + 1} / {totalQuestions} Soal
                       </span>
                     </div>
                   </div>
