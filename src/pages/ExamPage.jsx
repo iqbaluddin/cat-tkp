@@ -27,7 +27,7 @@ const ExamPage = () => {
   const [examResults, setExamResults] = useState(null);
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
 
-  const DURATION = 60; // 2 jam
+  const DURATION = 600; // 2 jam
   const questionsPerPage = 20;
   const totalQuestions = shuffledQuestions.length;
   const totalPages = Math.ceil(totalQuestions / questionsPerPage);
