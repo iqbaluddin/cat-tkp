@@ -66,9 +66,7 @@ const Sidebar = ({
     <div className="bg-white rounded-xl shadow-lg p-4 md:p-5 h-full flex flex-col">
       {/* Profile Card */}
       <div className="bg-linear-to-br from-primary/5 to-primary/10 rounded-xl p-5 mb-4">
-        <h2 className="font-semibold text-gray-800 truncate">
-          Tryout Sekolah Rakyat
-        </h2>
+        <h2 className="font-semibold text-gray-800 truncate">Free Tryout</h2>
 
         {/* <p className="text-sm text-gray-600 leading-relaxed">
           Selamat datang di halaman tryout berbasis{" "}
